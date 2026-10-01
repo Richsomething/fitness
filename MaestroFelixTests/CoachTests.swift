@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Testing
 @testable import MaestroFelix
 
@@ -68,6 +69,48 @@ struct CoachTests {
     @Test func eachCoachHasItsOwnToneAndLook() {
         #expect(Set(CoachCatalog.personas.map(\.tone)).count == CoachCatalog.personas.count)
         #expect(Set(CoachCatalog.personas.map(\.symbol)).count == CoachCatalog.personas.count)
+    }
+
+    @Test func rosterHasDistinctSpecialtiesAndStableExistingIDs() {
+        #expect(CoachCatalog.personas.map(\.id) == ["vera", "max", "yan", "lev"])
+        #expect(Set(CoachCatalog.personas.map(\.specialty)).count == 4)
+        #expect(Set(CoachCatalog.personas.map(\.portrait)).count == 4)
+        #expect(CoachCatalog.personas.allSatisfy { !$0.approach.isEmpty })
+    }
+
+    @Test("all characters render every event without unresolved placeholders", arguments: CoachCatalog.personas.map(\.id))
+    func characterLinesRender(personaID: String) {
+        for event in CoachEvent.allCases {
+            for seed in 0..<8 {
+                let line = CoachCatalog.line(for: event, persona: CoachCatalog.persona(personaID), context: CoachContext(name: "Аня", nextDay: "завтра"), seed: seed)
+                #expect(!line.isEmpty && !line.contains("{"))
+            }
+        }
+    }
+
+    @Test("each character bundles a six-frame expression sheet", arguments: CoachCatalog.personas.map(\.id))
+    func bundledExpressionsHaveSixSquareCells(personaID: String) throws {
+        let sheet = try #require(UIImage(named: CoachCatalog.persona(personaID).portrait))
+        #expect(sheet.size.width * 2 == sheet.size.height * 3)
+        #expect(sheet.size.width >= 768)
+    }
+
+    @Test func emotionsFollowWorkoutEvents() {
+        #expect(CoachEmotion.forEvent(.welcome) == .neutral)
+        #expect(CoachEmotion.forEvent(.upcomingWorkout) == .focused)
+        #expect(CoachEmotion.forEvent(.sessionCompleted) == .proud)
+        #expect(CoachEmotion.forEvent(.missedSession) == .supportive)
+        #expect(CoachEmotion.forEvent(.returnAfterPause) == .encouraging)
+        #expect(CoachEmotion.forEvent(.restDay) == .relaxed)
+        #expect(Set(CoachEvent.allCases.map(CoachEmotion.forEvent)).count == 6)
+    }
+
+    @Test func levelAtlasesBundleTransparentFullBodyFigures() throws {
+        for name in ["male-levels-anime", "female-levels-anime"] {
+            let atlas = try #require(UIImage(named: name))
+            #expect(atlas.size.width > atlas.size.height)
+            #expect(atlas.cgImage?.alphaInfo != .none)
+        }
     }
 
     @Test func stateReadsOldDataAndSurvivesJSON() throws {

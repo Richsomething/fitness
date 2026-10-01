@@ -2,7 +2,7 @@ import Foundation
 
 /// How the coach speaks. The tone changes the words only — never the exercises or the load.
 enum CoachTone: String, Codable, CaseIterable, Identifiable {
-    case calm, energetic, focused
+    case calm, energetic, focused, supportive
     var id: String { rawValue }
 
     var title: String {
@@ -10,22 +10,61 @@ enum CoachTone: String, Codable, CaseIterable, Identifiable {
         case .calm: "Спокойный"
         case .energetic: "Энергичный"
         case .focused: "Собранный"
+        case .supportive: "Заботливый"
         }
     }
 }
 
-/// A virtual coach the person picks: a name, a tone and a look. The look is a placeholder emblem until
-/// the characters are drawn; a coach is never presented as a live person.
+/// An original virtual character with a specialty and a distinct speaking style.
 struct CoachPersona: Identifiable, Equatable {
     let id: String
     let name: String
     let tone: CoachTone
     let symbol: String
     let blurb: String
+    let specialty: String
+    let approach: String
+    var portrait: String { "coach-" + id + "-expressions" }
+    var selectionLine: String {
+        switch tone {
+        case .calm: "Договорились. Каждый повтор — под контролем. Начинаем."
+        case .energetic: "Теперь работаем жёстче. По твоему плану — с моим огнём!"
+        case .focused: "Любопытно. Проверим, на что ты способен. Результаты запишем."
+        case .supportive: "Ну что, напарник? Я рядом. Дойдём в твоём темпе."
+        }
+    }
 }
 
 enum CoachEvent: String, Codable, CaseIterable {
     case welcome, upcomingWorkout, restDay, sessionCompleted, missedSession, returnAfterPause
+}
+
+/// Fixed frames in each bundled 3 × 2 expression sheet. No image generation at runtime.
+enum CoachEmotion: Int, CaseIterable, Identifiable {
+    case neutral, focused, encouraging, proud, supportive, relaxed
+    var id: Int { rawValue }
+    var column: Int { rawValue % 3 }
+    var row: Int { rawValue / 3 }
+    var title: String {
+        switch self {
+        case .neutral: "Знакомство"
+        case .focused: "Концентрация"
+        case .encouraging: "Вперёд"
+        case .proud: "Результат"
+        case .supportive: "Поддержка"
+        case .relaxed: "Отдых"
+        }
+    }
+    static func forEvent(_ event: CoachEvent) -> Self {
+        switch event {
+        case .welcome: .neutral
+        case .upcomingWorkout: .focused
+        case .sessionCompleted: .proud
+        case .missedSession: .supportive
+        case .returnAfterPause: .encouraging
+        case .restDay: .relaxed
+        }
+    }
 }
 
 /// What a line may mention. Nothing about the body, the weight or the health.
@@ -54,9 +93,10 @@ private extension String {
 
 enum CoachCatalog {
     static let personas = [
-        CoachPersona(id: "vera", name: "Вера", tone: .calm, symbol: "leaf.fill", blurb: "Идём шаг за шагом, в твоём темпе."),
-        CoachPersona(id: "max", name: "Макс", tone: .energetic, symbol: "bolt.fill", blurb: "Подбадриваю и зову вперёд."),
-        CoachPersona(id: "yan", name: "Ян", tone: .focused, symbol: "scope", blurb: "Коротко и по делу."),
+        CoachPersona(id: "vera", name: "Вера", tone: .calm, symbol: "leaf.fill", blurb: "Точность важнее спешки.", specialty: "Техника и контроль", approach: "Внимательная и спокойная. Помогает сосредоточиться на движении и ровном темпе."),
+        CoachPersona(id: "max", name: "Макс", tone: .energetic, symbol: "bolt.fill", blurb: "Сильнее с каждым подходом.", specialty: "Сила", approach: "Азартный и прямой. Заряжает на работу, ценит усилие и радуется каждому завершённому занятию."),
+        CoachPersona(id: "yan", name: "Ян", tone: .focused, symbol: "scope", blurb: "Прогресс начинается с системы.", specialty: "Рост мышц", approach: "Сдержанный аналитик. Говорит коротко, замечает последовательность и напоминает записывать результаты."),
+        CoachPersona(id: "lev", name: "Лев", tone: .supportive, symbol: "sun.max.fill", blurb: "Вернуться — уже хороший шаг.", specialty: "Возвращение в форму", approach: "Терпеливый наставник с тёплым юмором. Поддерживает после пауз и помогает сохранять ритм."),
     ]
 
     static func persona(_ id: String?) -> CoachPersona {
@@ -88,7 +128,7 @@ enum CoachCatalog {
         case (.calm, .welcome):
             ["Привет{, name}. Идём по плану, шаг за шагом.", "Рад тебя видеть{, name}. Начнём спокойно.", "Всё готово. Двигаемся в своём темпе."]
         case (.calm, .upcomingWorkout):
-            ["Сегодня идём по плану, шаг за шагом.", "Тренировка ждёт — без спешки, в своём темпе.", "Разомнись и начинай, когда будешь готов."]
+            ["Сегодня следим за движением. Чётко, спокойно, без спешки.", "Красивый подход начинается с контроля. Начнём с разминки.", "Держим ровный темп. Каждый повтор — осознанно."]
         case (.calm, .restDay):
             ["Сегодня отдых по плану. Следующая тренировка — {next}.", "Восстановление — тоже часть плана.",
              "День отдыха. Хочется подвигаться — есть лёгкий вариант."]
@@ -104,7 +144,7 @@ enum CoachCatalog {
         case (.energetic, .welcome):
             ["Привет{, name}! Готов двигаться?", "Ты здесь — уже отлично! Погнали?", "Так, посмотрим, что у нас сегодня!"]
         case (.energetic, .upcomingWorkout):
-            ["Твоя тренировка уже ждёт. Начнём?", "Время действовать! План готов.", "Сегодня твой день. Жми «Начать»!"]
+            ["Собираем силу по одному подходу! Начнём с разминки.", "План готов! Сегодня работаем уверенно, без гонки за рекордом.", "Твой следующий шаг к силе — прийти и сделать план. Погнали!"]
         case (.energetic, .restDay):
             ["Сегодня заслуженный отдых! Дальше — {next}.", "Отдыхаем и набираемся сил!", "День отдыха! А хочешь размяться — есть лёгкий блок."]
         case (.energetic, .sessionCompleted):
@@ -114,10 +154,23 @@ enum CoachCatalog {
         case (.energetic, .returnAfterPause):
             ["Ты вернулся{, name}! Отлично, снова в деле.", "С возвращением! Разгоняемся потихоньку.", "Пауза позади — поехали!"]
 
+        case (.supportive, .welcome):
+            ["Привет{, name}. Найдём ритм, который впишется в твою жизнь.", "Хорошо, что ты здесь. Начнём без суеты."]
+        case (.supportive, .upcomingWorkout):
+            ["Форма возвращается шагами. Сегодня сделаем один.", "Разминка, первый блок — и мы снова в ритме. Без геройства."]
+        case (.supportive, .restDay):
+            ["Сегодня отдыхаем. Даже у привычки бывают выходные.", "Восстановление входит в план. Можно выдохнуть.", "Следующая встреча — {next}. Сегодня набираемся сил."]
+        case (.supportive, .sessionCompleted):
+            ["Ещё одна встреча с собой состоялась. Хорошая работа{, name}.", "На сегодня достаточно. Ритм строится из таких дней."]
+        case (.supportive, .missedSession):
+            ["Один пропуск не перечёркивает путь. Вернёмся на следующем занятии.", "Жизнь иногда меняет расписание. Продолжим, когда получится."]
+        case (.supportive, .returnAfterPause):
+            ["С возвращением{, name}. Рекорды подождут, сначала найдём ритм.", "Давно не виделись. Начнём спокойно — мы никуда не опаздываем."]
+
         case (.focused, .welcome):
             ["План готов. Начинаем.", "Всё на месте{, name}. Приступаем.", "Профиль загружен. Готов к работе."]
         case (.focused, .upcomingWorkout):
-            ["План готов. Начинаем с первого блока.", "Сегодня по плану тренировка. Приступай.", "Всё подготовлено. Первое упражнение ждёт."]
+            ["План готов. Качественные подходы, затем запись результата.", "Рост любит последовательность. Начинаем с первого блока.", "Работаем по плану. Результаты сохраняем для следующего занятия."]
         case (.focused, .restDay):
             ["Сегодня отдых по плану. Следующее занятие — {next}.", "Отдых. Восстановление запланировано.", "День без тренировки. Лёгкий блок — по желанию."]
         case (.focused, .sessionCompleted):

@@ -31,7 +31,7 @@ struct TodayScreen: View {
                     // The day's own card comes first; the coach's line is a note under it, not a card above it.
                     TodayStateCard(state: state).entrance(2)
                     CoachCard(persona: app.coach.persona, line: app.coachLine(for: app.coachEvent(for: state)),
-                              actionTitle: action(for: state)?.title, action: action(for: state)?.run)
+                              event: app.coachEvent(for: state), actionTitle: action(for: state)?.title, action: action(for: state)?.run)
                         .entrance(3)
                     WeekStrip(week: app.week(of: app.today), today: app.today, progress: app.progress.stats.week,
                               streak: app.progress.stats.streak)

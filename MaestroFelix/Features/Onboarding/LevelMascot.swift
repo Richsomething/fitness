@@ -62,11 +62,41 @@ struct LevelMascot: View {
     }
 
     private func figure(_ image: String) -> some View {
-        Image(image)
-            .resizable()
-            .scaledToFit()
-            .frame(height: Self.height)
+        LevelCharacterPortrait(assetName: image)
+            .frame(width: Self.height * 0.5, height: Self.height)
             .shadow(color: FelixTheme.cobalt.opacity(isActive ? 0.3 : 0), radius: 18)
+    }
+}
+
+/// Each atlas contains five isolated full-body figures in equal columns, one per training level.
+/// Fit the complete cell without stretching; this also supplies the close-up in character selection.
+struct LevelCharacterPortrait: View {
+    let assetName: String
+    private var atlas: String { assetName.hasPrefix("female-") ? "female-levels-anime" : "male-levels-anime" }
+    private var column: Int { min(4, max(0, (assetName.split(separator: "-").compactMap { Int($0) }.first ?? 1) - 1)) }
+    private static let ratios: [String: CGFloat] = Dictionary(uniqueKeysWithValues:
+        ["female-levels-anime", "male-levels-anime"].map { name in
+            let size = UIImage(named: name)?.size ?? CGSize(width: 2000, height: 1000)
+            return (name, size.width / size.height / 5)
+        })
+
+    var body: some View {
+        GeometryReader { proxy in
+            // Inset each cell's empty side margins so neighboring silhouettes cannot leak in.
+            let cellRatio = Self.ratios[atlas] ?? 0.4
+            let ratio = cellRatio * 0.84
+            let height = min(proxy.size.height, proxy.size.width / ratio)
+            let width = height * ratio
+            ZStack(alignment: .topLeading) {
+                Image(atlas).resizable()
+                    .frame(width: height * cellRatio * 5, height: height)
+                    .offset(x: -height * cellRatio * (CGFloat(column) + 0.08))
+            }
+            .frame(width: width, height: height, alignment: .topLeading)
+            .clipped()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
+        .accessibilityHidden(true)
     }
 }
 

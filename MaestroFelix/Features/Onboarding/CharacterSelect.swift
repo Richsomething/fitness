@@ -82,9 +82,7 @@ struct CharacterSelect: View {
         let dim = selection == nil ? 0.8 : 1
         // The athletic character of the level step, so both screens share one cast. The one behind
         // stays opaque and only darkens and softens: a see-through figure would show the background.
-        return Image(gender == .female ? "female-level-3" : "level-3")
-            .resizable()
-            .scaledToFit()
+        return LevelCharacterPortrait(assetName: gender == .female ? "female-level-3" : "level-3")
             .frame(width: size.width, height: size.height, alignment: .top)
             .scaleEffect(place.scale, anchor: .top)
             .saturation(0.35 + 0.65 * place.depth)
