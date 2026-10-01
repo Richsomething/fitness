@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// The week's days without a session, kept to one short row instead of a card each. A day that has not passed
@@ -81,10 +82,7 @@ struct PlaceSessionSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium, .large])
     }
 
     private func row(_ session: PlannedSession) -> some View {

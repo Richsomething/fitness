@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// Limitations step as a body scan: a figure that lights up marked zones next to the list of zones.
@@ -253,10 +254,7 @@ private struct LimitationEditorSheet: View {
         .foregroundStyle(FelixTheme.text)
         .sensoryFeedback(.selection, trigger: limitation.kind)
         .sensoryFeedback(.selection, trigger: limitation.side)
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.large])
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {

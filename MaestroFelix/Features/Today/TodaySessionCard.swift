@@ -84,7 +84,7 @@ struct InfoPill: View {
         .foregroundStyle(FelixTheme.ice)
         .padding(.horizontal, 10)
         .frame(height: 26)
-        .background(Capsule().fill(FelixTheme.cobalt.opacity(0.22)))
+        .felixGlass(in: Capsule(), interactive: false, tint: FelixTheme.cobalt.opacity(0.28))
     }
 }
 

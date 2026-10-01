@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 extension AppTab {
@@ -22,64 +23,42 @@ extension AppTab {
     }
 }
 
-/// The bottom bar: a glass capsule with the cobalt lens under the open tab, the same pair of pieces as
-/// `GlassSegmented` and the step bar of the sign-up, so a choice looks the same wherever it is made.
-/// It replaces the system tab bar, whose own lens could not be made to match.
+/// The bottom bar: the FelixGlass tab bar (a glass capsule with a glass lens under the open tab, the same pair of
+/// pieces as `GlassSegmented` and the step bar of the sign-up, so a choice looks the same wherever it is made) set
+/// on a pool of cobalt light. It replaces the system tab bar, whose own lens could not be made to match.
 struct FelixTabBar: View {
     @Binding var selection: AppTab
-    @Namespace private var lens
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    var body: some View {
-        HStack(spacing: 2) {
-            ForEach(AppTab.ordered, id: \.self) { tab in
-                item(tab)
-            }
-        }
-        .padding(4)
-        .felixGlass(in: Capsule(), interactive: false)
-        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.78), value: selection)
-        .sensoryFeedback(.selection, trigger: selection)
-        // Like the system bar, it stays at a size that fits four tabs however large the text is set.
-        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-        .padding(.horizontal, 16)
-        .padding(.top, 6)
-        // Sits lower than the home-indicator inset, like the system bar, so it does not float with a wide gap.
-        .padding(.bottom, -12)
-        // Black under the bar down to the screen edge, and a fade above it, so content scrolling toward the
-        // bar goes out softly instead of being cut.
-        .background(alignment: .bottom) { Color.black.ignoresSafeArea(edges: .bottom) }
-        .overlay(alignment: .top) {
-            LinearGradient(colors: [Color.black.opacity(0), Color.black], startPoint: .top, endPoint: .bottom)
-                .frame(height: 22)
-                .offset(y: -22)
-                .allowsHitTesting(false)
-        }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Разделы")
+    private var items: [GlassTabItem<AppTab>] {
+        AppTab.ordered.map { GlassTabItem(id: $0, title: $0.title, symbol: $0.symbol) }
     }
 
-    private func item(_ tab: AppTab) -> some View {
-        let isSelected = tab == selection
-        return Button { selection = tab } label: {
-            VStack(spacing: 3) {
-                Image(systemName: tab.symbol)
-                    .font(.system(size: 20, weight: .semibold))
-                    .frame(height: 24)
-                Text(tab.title)
-                    .font(.caption2.weight(.semibold))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+    var body: some View {
+        GlassTabBar(items: items, selection: $selection)
+            // Like the system bar, it stays at a size that fits four tabs however large the text is set.
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+            .padding(.horizontal, 16)
+            .padding(.top, 6)
+            // Sits lower than the home-indicator inset, like the system bar, so it does not float with a wide gap.
+            .padding(.bottom, -12)
+            // Black under the bar down to the screen edge with a soft cobalt light in it: glass over flat black has
+            // nothing to show, and the light is what it picks up. A fade above it lets content scrolling toward the
+            // bar go out softly instead of being cut.
+            .background(alignment: .bottom) {
+                ZStack {
+                    Color.black
+                    RadialGradient(colors: [FelixTheme.cobaltDeep.opacity(0.6), .clear], center: .bottom,
+                                   startRadius: 0, endRadius: 220)
+                }
+                .ignoresSafeArea(edges: .bottom)
             }
-            .foregroundStyle(isSelected ? Color.white : FelixTheme.secondary)
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .background {
-                if isSelected { GlassLens().matchedGeometryEffect(id: "lens", in: lens) }
+            .overlay(alignment: .top) {
+                LinearGradient(colors: [Color.black.opacity(0), Color.black], startPoint: .top, endPoint: .bottom)
+                    .frame(height: 22)
+                    .offset(y: -22)
+                    .allowsHitTesting(false)
             }
-            .contentShape(Capsule())
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityLabel(tab.title)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Разделы")
     }
 }

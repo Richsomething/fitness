@@ -1,4 +1,5 @@
 import Charts
+import FelixGlass
 import SwiftUI
 
 /// Body weight over time: the latest weighing, the change since the first one — in plain grey, never
@@ -144,9 +145,6 @@ struct WeightEntrySheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium])
     }
 }

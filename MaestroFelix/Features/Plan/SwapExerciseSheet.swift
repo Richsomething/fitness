@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// What to do in place of an exercise of a planned session: the ones that work the same muscles, without load
@@ -39,10 +40,7 @@ struct SwapExerciseSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium, .large])
     }
 
     private func row(_ option: Exercise, in session: PlannedSession) -> some View {

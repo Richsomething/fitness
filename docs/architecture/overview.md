@@ -40,9 +40,12 @@ Domain не импортирует SwiftUI, SwiftData или SDK AI-постав
 Исходники приложения — около 10,7 тыс. строк Swift, тесты — около 1,9 тыс. строк (Swift Testing, 167 тестов в 11 наборах, все прошли в симуляторе iPhone 18 Pro).
 
 ```text
+Packages/
+  FelixGlass/      Локальный Swift-пакет: стекло (поверхность, кнопки, переключатель, панель вкладок, лист),
+                   без зависимости от приложения; цвета приходят через environment
 MaestroFelix/
   App/             Точка входа, AppDelegate, маршрут уведомления (AppRouter)
-  DesignSystem/    FelixTheme, FelixControls, FelixComponents, FelixMotion
+  DesignSystem/    FelixTheme, FelixControls, FelixComponents, FelixMotion; стекло берёт из FelixGlass
   Domain/          Чистые типы без SwiftUI и SwiftData: DayKey, TrainingCalendar, Schedule,
                    Progress, BodyWeight, Coach, Reminders, Workout, WorkoutPlanner,
                    ExerciseInfo, OnboardingProfile, DocumentStore (протокол хранилища)

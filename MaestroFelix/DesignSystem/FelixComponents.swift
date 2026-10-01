@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// Scrolls the screen's column to the view marked with `.id(_:)`, so a block that appears low on the screen
@@ -104,16 +105,16 @@ struct EmptyHint: View {
     }
 }
 
+/// The lens under a chosen item: accent glass from the FelixGlass library. The name stays so the step bar of the
+/// sign-up, which draws its own items, can keep using it.
 struct GlassLens: View {
     var body: some View {
-        Capsule()
-            .fill(LinearGradient(colors: [FelixTheme.cobalt.opacity(0.85), FelixTheme.cobaltDeep.opacity(0.85)],
-                                 startPoint: .top, endPoint: .bottom))
-            .overlay(Capsule().strokeBorder(Color.white.opacity(0.25), lineWidth: 1))
+        GlassSelectionLens()
     }
 }
 
-/// A short choice between a few named options, as a glass capsule with a lens under the chosen one.
+/// A short choice between a few named options, as a glass capsule with a lens under the chosen one. A thin face
+/// over `GlassSegmentedControl`, so the call sites keep their `compact` and `tight` switches.
 struct GlassSegmented<Value: Hashable>: View {
     let options: [(value: Value, title: String)]
     @Binding var selection: Value
@@ -121,38 +122,9 @@ struct GlassSegmented<Value: Hashable>: View {
     var compact = false
     /// Smaller still, for four longer names side by side, so they all keep one size instead of shrinking unevenly.
     var tight = false
-    @Namespace private var lens
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        HStack(spacing: 2) {
-            ForEach(options.indices, id: \.self) { index in
-                segment(options[index])
-            }
-        }
-        .padding(4)
-        .felixGlass(in: Capsule(), interactive: false)
-        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.78), value: selection)
-    }
-
-    private func segment(_ option: (value: Value, title: String)) -> some View {
-        let isSelected = option.value == selection
-        return Button { selection = option.value } label: {
-            Text(option.title)
-                .font((tight ? Font.caption : compact ? Font.footnote : Font.subheadline).weight(.semibold))
-                .foregroundStyle(isSelected ? Color.white : FelixTheme.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(compact ? 0.7 : 0.8)
-                // Room between the words and the edge of the lens, so a long name shrinks instead of touching it.
-                .padding(.horizontal, tight ? 5 : compact ? 8 : 12)
-                .frame(maxWidth: .infinity, minHeight: compact ? 40 : 44)
-                .background {
-                    if isSelected { GlassLens().matchedGeometryEffect(id: "lens", in: lens) }
-                }
-                .contentShape(Capsule())
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        GlassSegmentedControl(options: options, selection: $selection, density: tight ? .tight : compact ? .compact : .regular)
     }
 }
 

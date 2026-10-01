@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// Schedule step: training days as glass cells and the start time as the sun's path across the day.
@@ -371,10 +372,7 @@ private struct TimeWheelSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium])
         .onAppear {
             let minutes = Int((hours * 60).rounded())
             time = Calendar.current.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: .now) ?? .now

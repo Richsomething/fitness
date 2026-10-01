@@ -126,6 +126,6 @@ private struct DeltaPill: View {
             .foregroundStyle(FelixTheme.ice)
             .padding(.horizontal, 12)
             .frame(minHeight: 32)
-            .background(Capsule().fill(FelixTheme.cobalt.opacity(0.22)))
+            .felixGlass(in: Capsule(), interactive: false, tint: FelixTheme.cobalt.opacity(0.28))
     }
 }

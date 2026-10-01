@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// Where to move a session: every day from today up to two weeks ahead, the free ones to pick and the busy
@@ -31,10 +32,7 @@ struct MoveSessionSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.fraction(0.78), .large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.fraction(0.78), .large])
     }
 
     /// Day → title of the session that stands on it, other than the one being moved.
@@ -100,10 +98,7 @@ struct PauseSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium])
     }
 
     private func option(_ title: String, until: DayKey) -> some View {

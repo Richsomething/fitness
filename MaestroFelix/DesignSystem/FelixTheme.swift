@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 import UIKit
 
@@ -127,36 +128,17 @@ struct FelixCard<Content: View>: View {
 }
 
 extension View {
-    /// Liquid Glass on iOS 26 and later; frosted material with a light edge before that.
-    /// `clear` keeps what is underneath readable, for a lens over content; `tint` colours the glass,
-    /// and changing it animates, so a toggle can light up without swapping views.
-    @ViewBuilder func felixGlass<S: InsettableShape>(in shape: S, interactive: Bool = true, clear: Bool = false,
-                                                     tint: Color? = nil) -> some View {
-        if #available(iOS 26.0, *) {
-            glassEffect((clear ? Glass.clear : Glass.regular).tint(tint).interactive(interactive), in: shape)
-        } else {
-            background(clear ? AnyShapeStyle(Color.white.opacity(0.12)) : AnyShapeStyle(.ultraThinMaterial), in: shape)
-                .overlay(shape.fill(tint ?? .clear))
-                .overlay(shape.strokeBorder(LinearGradient(colors: [.white.opacity(0.35), .white.opacity(0.06)],
-                                                           startPoint: .top, endPoint: .bottom), lineWidth: 1))
-        }
+    /// Glass behind a view, from the FelixGlass library: the system's Liquid Glass on iOS 26 and later, the library's
+    /// frosted glass before that. `clear` keeps what is underneath readable, for a lens over content; `tint` colours
+    /// the glass, and changing it animates, so a toggle can light up without swapping views.
+    func felixGlass<S: InsettableShape>(in shape: S, interactive: Bool = true, clear: Bool = false,
+                                        tint: Color? = nil) -> some View {
+        glassSurface(in: shape, style: (clear ? GlassStyle.clear : GlassStyle.regular).tinted(tint), interactive: interactive)
     }
 
-    /// Cobalt-tinted glass for the primary action.
-    @ViewBuilder func felixTintedGlass<S: InsettableShape>(in shape: S) -> some View {
-        if #available(iOS 26.0, *) {
-            glassEffect(.regular.tint(FelixTheme.cobalt.opacity(0.62)).interactive(), in: shape)
-        } else {
-            background {
-                ZStack {
-                    shape.fill(.ultraThinMaterial)
-                    shape.fill(LinearGradient(colors: [FelixTheme.cobalt.opacity(0.72), FelixTheme.cobaltDeep.opacity(0.66)],
-                                              startPoint: .top, endPoint: .bottom))
-                }
-            }
-            .overlay(shape.strokeBorder(LinearGradient(colors: [.white.opacity(0.55), .white.opacity(0.08)],
-                                                       startPoint: .top, endPoint: .bottom), lineWidth: 1))
-        }
+    /// Accent-tinted glass for the primary action.
+    func felixTintedGlass<S: InsettableShape>(in shape: S) -> some View {
+        glassSurface(in: shape, style: .accent)
     }
 }
 
@@ -171,26 +153,14 @@ struct PressableStyle: ButtonStyle {
     }
 }
 
+/// The main action of a screen: accent glass across the width. The look lives in `FelixGlass`.
 struct FelixPrimaryButton: View {
     let title: String
     var systemImage: String? = "arrow.right"
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                Text(title).font(.headline)
-                if let systemImage {
-                    Image(systemName: systemImage).font(.subheadline.weight(.bold))
-                }
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .felixTintedGlass(in: Capsule())
-            .shadow(color: FelixTheme.cobalt.opacity(0.4), radius: 20, y: 8)
-            .contentShape(Capsule())
-        }
-        .buttonStyle(PressableStyle())
+        GlassButton(title, systemImage: systemImage, role: .primary, action: action)
     }
 }
 
@@ -200,19 +170,7 @@ struct FelixSecondaryButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                if let systemImage {
-                    Image(systemName: systemImage).font(.subheadline.weight(.semibold))
-                }
-                Text(title).font(.headline)
-            }
-            .foregroundStyle(FelixTheme.text)
-            .frame(maxWidth: .infinity, minHeight: 54)
-            .felixGlass(in: Capsule())
-            .contentShape(Capsule())
-        }
-        .buttonStyle(PressableStyle())
+        GlassButton(title, systemImage: systemImage, role: .secondary, action: action)
     }
 }
 
@@ -222,16 +180,7 @@ struct FelixIconButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.body.weight(.semibold))
-                .foregroundStyle(FelixTheme.text)
-                .frame(width: 44, height: 44)
-                .felixGlass(in: Circle())
-                .contentShape(Circle())
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityLabel(label)
+        GlassIconButton(systemImage: systemImage, label: label, action: action)
     }
 }
 
