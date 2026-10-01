@@ -1,0 +1,27 @@
+.DS_Store
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+
+# Not part of the app: source art, exported archives, spreadsheet tooling and its output
+*.zip
+node_modules/
+outputs/
+tmp_workbook_inspect/
+*.mjs
+/*.png
+/AnatomyMusclePackNoGlow/
+/FemaleBackMuscleTextureOverlays/
+/MaleBackMuscleTextureOverlays/
+/MaleMuscleTextureOverlays/
+/MuscleOverlays/
+/MuscleTextureOverlays/
+/MuscleTextureOverlaysFinal/
+/TrainingLevelCharacters/
+/TrainingLevelCharactersFemale/
+
+# Local tooling data: session logs and cost metrics, and a link into a local cache
+.claude/ecc-data/
+node_modules
+.claude/settings.local.json
