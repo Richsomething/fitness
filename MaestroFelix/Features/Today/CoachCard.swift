@@ -47,8 +47,6 @@ struct CoachAvatar: View {
             .shadow(color: persona.characterAccent.opacity(0.5), radius: 8)
             .accessibilityHidden(true)
     }
-
-
 }
 
 /// What the coach says now, with one action that fits the day.

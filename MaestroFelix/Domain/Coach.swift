@@ -20,7 +20,6 @@ struct CoachPersona: Identifiable, Equatable {
     let id: String
     let name: String
     let tone: CoachTone
-    let symbol: String
     let blurb: String
     let specialty: String
     let approach: String
@@ -93,10 +92,10 @@ private extension String {
 
 enum CoachCatalog {
     static let personas = [
-        CoachPersona(id: "vera", name: "Вера", tone: .calm, symbol: "leaf.fill", blurb: "Точность важнее спешки.", specialty: "Техника и контроль", approach: "Внимательная и спокойная. Помогает сосредоточиться на движении и ровном темпе."),
-        CoachPersona(id: "max", name: "Макс", tone: .energetic, symbol: "bolt.fill", blurb: "Сильнее с каждым подходом.", specialty: "Сила", approach: "Азартный и прямой. Заряжает на работу, ценит усилие и радуется каждому завершённому занятию."),
-        CoachPersona(id: "yan", name: "Ян", tone: .focused, symbol: "scope", blurb: "Прогресс начинается с системы.", specialty: "Рост мышц", approach: "Сдержанный аналитик. Говорит коротко, замечает последовательность и напоминает записывать результаты."),
-        CoachPersona(id: "lev", name: "Лев", tone: .supportive, symbol: "sun.max.fill", blurb: "Вернуться — уже хороший шаг.", specialty: "Возвращение в форму", approach: "Терпеливый наставник с тёплым юмором. Поддерживает после пауз и помогает сохранять ритм."),
+        CoachPersona(id: "vera", name: "Вера", tone: .calm, blurb: "Точность важнее спешки.", specialty: "Техника и контроль", approach: "Внимательная и спокойная. Помогает сосредоточиться на движении и ровном темпе."),
+        CoachPersona(id: "max", name: "Макс", tone: .energetic, blurb: "Сильнее с каждым подходом.", specialty: "Сила", approach: "Азартный и прямой. Заряжает на работу, ценит усилие и радуется каждому завершённому занятию."),
+        CoachPersona(id: "yan", name: "Ян", tone: .focused, blurb: "Прогресс начинается с системы.", specialty: "Рост мышц", approach: "Сдержанный аналитик. Говорит коротко, замечает последовательность и напоминает записывать результаты."),
+        CoachPersona(id: "lev", name: "Лев", tone: .supportive, blurb: "Вернуться — уже хороший шаг.", specialty: "Возвращение в форму", approach: "Терпеливый наставник с тёплым юмором. Поддерживает после пауз и помогает сохранять ритм."),
     ]
 
     static func persona(_ id: String?) -> CoachPersona {

@@ -66,9 +66,8 @@ struct CoachTests {
         #expect(CoachCatalog.persona(nil).id == CoachCatalog.personas[0].id)
     }
 
-    @Test func eachCoachHasItsOwnToneAndLook() {
+    @Test func eachCoachHasItsOwnTone() {
         #expect(Set(CoachCatalog.personas.map(\.tone)).count == CoachCatalog.personas.count)
-        #expect(Set(CoachCatalog.personas.map(\.symbol)).count == CoachCatalog.personas.count)
     }
 
     @Test func rosterHasDistinctSpecialtiesAndStableExistingIDs() {
