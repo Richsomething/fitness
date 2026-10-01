@@ -15,6 +15,10 @@ struct AboutView: View {
                 }
                 FelixList {
                     line("Версия", "\(version) (\(build))")
+                    FelixDivider()
+                    FelixLinkRow(title: "Конфиденциальность", detail: "Что хранится и куда уходит", icon: "lock.shield.fill") {
+                        PrivacyView()
+                    }
                 }
                 note("Данные", "Профиль, тренировки, вес и настройки хранятся только на этом iPhone. Приложение ничего не отправляет по сети и не использует сторонней аналитики. Экспорт и удаление — в разделе «Данные».")
                 note("План", "Составлен по общим правилам из твоих ответов и оценок тренировок. Он не заменяет врача и тренера: при боли или сомнениях сначала спроси специалиста.")
@@ -44,5 +48,45 @@ struct AboutView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 4)
+    }
+}
+
+/// What the app keeps, where, and what leaves the phone, in plain words. It states what the code does today
+/// (see docs/architecture/privacy.md); a store listing and a legal policy are a separate matter before release.
+struct PrivacyView: View {
+    private static let facts: [(title: String, text: String)] = [
+        ("Где хранятся данные",
+         "Профиль, тренировки, вес, расписание, достижения и настройки хранятся только на этом iPhone."),
+        ("Что уходит по сети",
+         "Ничего: в приложении нет сетевого кода, сторонней аналитики и отслеживания."),
+        ("Отметки о здоровье",
+         "Зоны с дискомфортом нужны только чтобы обойти нагрузку на них при подборе упражнений. Они остаются на этом iPhone, как и всё остальное."),
+        ("Уведомления",
+         "Разрешение запрашивается только когда ты включаешь напоминания. В текстах уведомлений нет веса, цели и ограничений."),
+        ("Экспорт и удаление",
+         "В разделе «Данные» всё можно сохранить в файл или удалить. Удаление очищает приложение, но не затрагивает резервные копии iPhone."),
+    ]
+
+    var body: some View {
+        ScreenScaffold(glow: UnitPoint(x: 0.5, y: 0)) {
+            VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Eyebrow("Maestro Felix", color: FelixTheme.ice)
+                    Text("Конфиденциальность").font(.felixTitle).fixedSize(horizontal: false, vertical: true)
+                }
+                ForEach(Array(Self.facts.enumerated()), id: \.offset) { _, fact in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Eyebrow(fact.title)
+                        Text(fact.text)
+                            .font(.subheadline)
+                            .foregroundStyle(FelixTheme.text.opacity(0.88))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.horizontal, 4)
+                }
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }

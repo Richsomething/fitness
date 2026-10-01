@@ -1,32 +1,22 @@
 import SwiftUI
 
 /// Schedule step: training days as glass cells and the start time as the sun's path across the day.
+/// Kept short enough for the dial to sit above the step bar on a tall iPhone: the count and the days of rest
+/// share one row, and the spacing between the blocks is tight.
 struct ScheduleStep: View {
     @Bindable var model: OnboardingModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let count = model.draft.weekdays.count
-        VStack(alignment: .leading, spacing: 28) {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text("\(count)")
-                        .font(.felixNumber(64))
-                        .monospacedDigit()
-                        .contentTransition(.numericText(value: Double(count)))
-                    Text(count == 0 ? "Выбери дни в зале" : "\(RussianPlural.trainings(count)) в неделю")
-                        .font(.headline)
-                        .foregroundStyle(FelixTheme.secondary)
-                        .contentTransition(.opacity)
-                }
-                .entrance(2)
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 14) {
+                weekSummary(count: count)
+                    .entrance(2)
                 TrainingWeekPicker(selected: model.draft.weekdays) { day in
                     withAnimation(reduceMotion ? nil : .spring(response: 0.36, dampingFraction: 0.68)) { model.toggleDay(day) }
                 }
                 .entrance(3)
-                WeekRhythmBadge(count: count)
-                    .animation(reduceMotion ? nil : .snappy(duration: 0.25), value: count)
-                    .entrance(4)
             }
             VStack(alignment: .leading, spacing: 8) {
                 Eyebrow("Начало тренировки")
@@ -34,6 +24,34 @@ struct ScheduleStep: View {
             }
             .entrance(5)
         }
+    }
+
+    /// The count of trainings in a week, big, and what the rest of the week holds: the days of rest. No label
+    /// grades the choice.
+    private func weekSummary(count: Int) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            Text("\(count)")
+                .font(.felixNumber(56))
+                .monospacedDigit()
+                .contentTransition(.numericText(value: Double(count)))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(count == 0 ? "Выбери дни в зале" : "\(RussianPlural.trainings(count)) в неделю")
+                    .font(.headline)
+                Text(count == 0 ? "Отметь дни ниже" : Self.restText(count))
+                    .font(.subheadline)
+                    .foregroundStyle(FelixTheme.secondary)
+            }
+            .contentTransition(.opacity)
+            Spacer(minLength: 0)
+        }
+        .animation(reduceMotion ? nil : .snappy(duration: 0.25), value: count)
+        .accessibilityElement(children: .combine)
+    }
+
+    private static func restText(_ count: Int) -> String {
+        let rest = 7 - count
+        return rest == 0 ? "Без дней отдыха"
+            : "\(rest) \(RussianPlural.form(rest, one: "день", few: "дня", many: "дней")) отдыха"
     }
 
     private var startTime: Binding<Double> {
@@ -56,7 +74,7 @@ private struct TrainingWeekPicker: View {
     let toggle: (Int) -> Void
 
     private let spacing: CGFloat = 6
-    private let cellHeight: CGFloat = 96
+    private let cellHeight: CGFloat = 88
     private let lift: CGFloat = 6
 
     var body: some View {
@@ -118,51 +136,6 @@ private struct TrainingWeekPicker: View {
             } else {
                 runs.append(day...day)
             }
-        }
-    }
-}
-
-/// What the week leaves besides the training: the days of rest. The count of trainings is already the big number
-/// above, and no label here grades the choice.
-private struct WeekRhythmBadge: View {
-    let count: Int
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: symbol)
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(count > 0 ? Color.white : FelixTheme.secondary)
-                .contentTransition(.symbolEffect(.replace))
-                .frame(width: 36, height: 36)
-                .background(Circle().fill(count > 0 ? FelixTheme.cobalt : Color.white.opacity(0.08)))
-            VStack(alignment: .leading, spacing: 2) {
-                Eyebrow("Ритм недели", color: FelixTheme.ice)
-                Text(count > 0 ? restText : "Отметь дни тренировок")
-                    .font(.headline)
-                    .contentTransition(.opacity)
-            }
-            Spacer(minLength: 8)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .felixGlass(in: RoundedRectangle(cornerRadius: 22, style: .continuous), interactive: false)
-        .accessibilityElement(children: .combine)
-    }
-
-    private var restText: String {
-        let rest = 7 - count
-        return rest == 0 ? "Без дней отдыха"
-            : "\(rest) \(RussianPlural.form(rest, one: "день", few: "дня", many: "дней")) отдыха"
-    }
-
-    /// The glyph hints at the load; it names nothing.
-    private var symbol: String {
-        switch count {
-        case 1...2: "leaf.fill"
-        case 3...4: "bolt.fill"
-        case 5...6: "flame.fill"
-        case 7: "infinity"
-        default: "hand.tap.fill"
         }
     }
 }

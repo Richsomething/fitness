@@ -114,6 +114,69 @@ struct SessionTests {
         #expect(running.nextExercise(after: 2) == 0)
     }
 
+    // MARK: Pause and skip
+
+    @Test("pausing a timed set holds the time it had, and resuming goes on from it")
+    func aTimedSetCanBePausedAndResumed() {
+        let running = session()
+        running.start(1)
+        guard case let .working(_, since) = running.phase else { Issue.record("expected working"); return }
+        running.pause(at: since.addingTimeInterval(12))
+        #expect(running.phase == .paused(index: 1, elapsed: 12))
+        let later = since.addingTimeInterval(500)
+        running.resume(at: later)
+        #expect(running.phase == .working(index: 1, since: later.addingTimeInterval(-12)))
+    }
+
+    @Test("only a timed set under way can be paused")
+    func pauseNeedsATimedSetUnderWay() {
+        let running = session()
+        running.pause()
+        #expect(running.phase == .overview)
+        running.start(0)
+        running.pause()
+        guard case .working = running.phase else { Issue.record("a set with a weight has no clock to hold"); return }
+        running.resume()
+        guard case .working = running.phase else { Issue.record("resume outside a pause changes nothing"); return }
+    }
+
+    @Test("a paused set is written down and comes back from a snapshot")
+    func aPausedSetSurvivesASnapshot() throws {
+        let running = session()
+        running.start(1)
+        running.pause()
+        let decoded = try JSONDecoder().decode(SessionSnapshot.self, from: JSONEncoder().encode(running.snapshot()))
+        #expect(decoded.isConsistent)
+        let restored = try #require(WorkoutSession(snapshot: decoded))
+        #expect(restored.phase == running.phase && restored.phase.exerciseIndex == 1)
+    }
+
+    @Test("skipping goes to the next exercise with sets left and writes nothing down")
+    func skippingMovesOnWithoutRecording() {
+        let running = session()
+        running.start(1)
+        running.skip(1)
+        guard case .working(2, _) = running.phase else { Issue.record("expected the next exercise"); return }
+        #expect(running.completedSets == 0)
+    }
+
+    @Test("skipping when nothing else is left goes back to the list, and done sets stay")
+    func skippingTheOnlyOneLeftReturnsToTheList() {
+        let running = session()
+        for index in [0, 2] {
+            running.start(index)
+            while !running.isDone(index) {
+                running.finishSet(index == 0 ? SetEntry(weightKg: 40, reps: 10) : SetEntry(reps: 12))
+                running.startNextSet()
+            }
+        }
+        running.start(1)
+        running.finishSet(SetEntry(seconds: 40))
+        running.skip(1)
+        #expect(running.phase == .overview)
+        #expect(running.sets[1].count == 1 && running.completedSets == 6)
+    }
+
     // MARK: Editing
 
     @Test func aSetCanBeChangedKeepingItsPlaceAndIdentity() {
