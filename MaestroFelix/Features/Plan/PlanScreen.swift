@@ -30,7 +30,7 @@ struct PlanScreen: View {
                     if !restDays.isEmpty { PlanRestDays(days: restDays).entrance(6) }
                     if !overview.loads.isEmpty { PlanLoadCard(overview: overview).entrance(7) }
                     FelixList {
-                        FelixLinkRow(title: "История тренировок", detail: "Все недели и результаты", icon: "clock.arrow.circlepath") {
+                        FelixLinkRow(title: "История тренировок", detail: "Календарь, все недели и результаты", icon: "clock.arrow.circlepath") {
                             HistoryListView()
                         }
                     }

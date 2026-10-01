@@ -150,6 +150,8 @@ struct ExerciseRunnerView: View {
                                  reps: $reps, kind: $kind, step: $step, previous: session.previousText(for: index))
                 }
             }
+        case let .paused(_, elapsed):
+            RingView(content: timedRing(elapsed: elapsed, label: "Пауза")).frame(width: 280, height: 280)
         case let .resting(_, until, length):
             VStack(spacing: 14) {
                 ring(now: { restRing(until: until, length: length, now: $0) })
@@ -175,10 +177,13 @@ struct ExerciseRunnerView: View {
     }
 
     private func timedWorkingRing(since: Date, now: Date) -> RingContent {
-        let elapsed = now.timeIntervalSince(since)
+        timedRing(elapsed: now.timeIntervalSince(since), label: isSingle ? "Идёт" : "Подход \(setNumber)")
+    }
+
+    private func timedRing(elapsed: TimeInterval, label: String) -> RingContent {
         let reached = elapsed >= Double(item.holdSeconds)
         return RingContent(progress: elapsed / Double(max(item.holdSeconds, 1)), colors: [FelixTheme.ice, FelixTheme.cobalt],
-                           label: isSingle ? "Идёт" : "Подход \(setNumber)", value: Self.clock(elapsed),
+                           label: label, value: Self.clock(elapsed),
                            caption: reached ? "Цель есть!" : "Цель \(Self.clock(Double(item.holdSeconds)))")
     }
 
@@ -229,7 +234,7 @@ struct ExerciseRunnerView: View {
         if on && !changed {
             alertNote = "Уведомления выключены в настройках iOS."
         } else {
-            alertNote = changed ? (on ? "Сигнал включён: скажем, когда отдых закончится, даже если экран погас." : "Сигнал выключен.") : nil
+            alertNote = changed ? (on ? "Сигнал включён." : "Сигнал выключен.") : nil
         }
         if changed { app.syncRestAlert(for: session) }
     }
@@ -267,7 +272,15 @@ struct ExerciseRunnerView: View {
     @ViewBuilder private var controls: some View {
         switch session.phase {
         case let .working(_, since):
-            FelixPrimaryButton(title: finishTitle, systemImage: "checkmark") { finishSet(since: since) }
+            VStack(spacing: 10) {
+                FelixPrimaryButton(title: finishTitle, systemImage: "checkmark") { finishSet(since: since) }
+                if exercise.isTimed { timedExtras { session.pause() } }
+            }
+        case .paused:
+            VStack(spacing: 10) {
+                FelixPrimaryButton(title: "Продолжить", systemImage: "play.fill") { session.resume() }
+                timedExtras()
+            }
         case .resting:
             VStack(spacing: 10) {
                 FelixPrimaryButton(title: "Начать подход \(setNumber)", systemImage: "play.fill") {
@@ -287,6 +300,19 @@ struct ExerciseRunnerView: View {
                 }
             } else {
                 FelixPrimaryButton(title: "Завершить и оценить", systemImage: "flag.checkered", action: onFinishWorkout)
+            }
+        }
+    }
+
+    /// Under a timed set: hold the clock (when it runs) and leave the exercise for now. Nothing is written down
+    /// by "Пропустить"; sets already done stay.
+    private func timedExtras(onPause: (() -> Void)? = nil) -> some View {
+        HStack(spacing: 10) {
+            if let onPause {
+                FelixSecondaryButton(title: "Пауза", systemImage: "pause.fill", action: onPause)
+            }
+            FelixSecondaryButton(title: "Пропустить", systemImage: "forward.fill") {
+                withAnimation(.smooth) { session.skip(index) }
             }
         }
     }

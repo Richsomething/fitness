@@ -123,7 +123,7 @@ enum OnboardingStep: Int, CaseIterable, Codable, Identifiable {
         case .goal: "Выбери главный ориентир. Он может меняться вместе с тобой."
         case .preferences: "Опыт, время и пожелания помогут подготовить подходящий план."
         case .schedule: "Выбери столько дней, сколько раз хочешь ходить в зал."
-        case .limitations: "Отметь травмы и ограничения, которые нужно учитывать при подборе упражнений."
+        case .limitations: "Отметь травмы и ограничения: учтём при подборе."
         case .review: "Проверь профиль перед сохранением. К любому шагу можно вернуться."
         }
     }
@@ -168,10 +168,10 @@ struct OnboardingDraft: Codable, Equatable {
         case .body:
             guard gender == .female || gender == .male else { return "Выбери пол." }
             guard let height, height.isFinite, (80...250).contains(height) else {
-                return "Укажи рост от 80 до 250 см. Это диапазон ввода, а не оценка здоровья."
+                return "Рост: от 80 до 250 см."
             }
             guard let weight, weight.isFinite, (20...400).contains(weight) else {
-                return "Укажи вес от 20 до 400 кг. Это диапазон ввода, а не оценка здоровья."
+                return "Вес: от 20 до 400 кг."
             }
         case .goal:
             if goal == nil { return "Выбери свою основную цель." }

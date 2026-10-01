@@ -40,7 +40,7 @@ struct WorkoutSessionView: View {
             Button("Удалить без сохранения", role: .destructive) { discard() }
             Button("Вернуться к тренировке", role: .cancel) {}
         } message: {
-            Text("Всё, что записано в этой тренировке (\(session.completedSets) из \(session.totalSets)), пропадёт.")
+            Text("Записанное (\(session.completedSets) из \(session.totalSets)) пропадёт.")
         }
     }
 
@@ -61,7 +61,7 @@ struct WorkoutSessionView: View {
             switch session.phase {
             case .overview:
                 overview
-            case .working, .resting, .exerciseDone:
+            case .working, .resting, .paused, .exerciseDone:
                 if let index = session.phase.exerciseIndex {
                     ExerciseRunnerView(session: session, index: index) { session.beginRating() }
                 }
@@ -213,14 +213,22 @@ struct WorkoutSessionView: View {
                             .foregroundStyle(FelixTheme.ice)
                     }
                     if item.sets > 1 {
+                        let setsDone = min(session.setsDone[index], item.sets)
                         HStack(spacing: 4) {
                             ForEach(0..<item.sets, id: \.self) { set in
                                 Capsule()
-                                    .fill(set < session.setsDone[index] ? FelixTheme.cobalt : Color.white.opacity(0.12))
+                                    .fill(set < setsDone ? FelixTheme.cobalt : Color.white.opacity(0.12))
                                     .frame(width: 18, height: 4)
                             }
+                            // The dashes alone do not say what they count.
+                            Text("\(setsDone) из \(item.sets)")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(FelixTheme.tertiary)
+                                .padding(.leading, 4)
                         }
                         .padding(.top, 2)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(words.progress): \(setsDone) из \(item.sets)")
                     }
                 }
                 Spacer(minLength: 8)

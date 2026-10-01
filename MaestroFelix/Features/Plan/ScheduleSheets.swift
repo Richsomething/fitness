@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// Where to move a session: every day from today up to two weeks ahead, the free ones to pick and the busy
@@ -15,7 +16,7 @@ struct MoveSessionSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 Eyebrow("Перенос", color: FelixTheme.ice)
                 Text("Когда потренируемся?").font(.felixHeadline).fixedSize(horizontal: false, vertical: true)
-                Text("Состав и серия сохранятся. В один день — одно занятие.")
+                Text("Состав и серия сохранятся.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -31,10 +32,7 @@ struct MoveSessionSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.fraction(0.78), .large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.fraction(0.78), .large])
     }
 
     /// Day → title of the session that stands on it, other than the one being moved.
@@ -85,7 +83,7 @@ struct PauseSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 Eyebrow("Пауза", color: FelixTheme.ice)
                 Text("На сколько отдохнём?").font(.felixHeadline).fixedSize(horizontal: false, vertical: true)
-                Text("Занятия на паузе не считаются пропусками, серия ждёт, напоминаний не будет. Историю это не меняет.")
+                Text("На паузе: пропусков и напоминаний нет.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -100,10 +98,7 @@ struct PauseSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium])
     }
 
     private func option(_ title: String, until: DayKey) -> some View {

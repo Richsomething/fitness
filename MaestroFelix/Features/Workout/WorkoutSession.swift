@@ -9,6 +9,8 @@ enum SessionPhase: Equatable, Codable {
     case working(index: Int, since: Date)
     /// Rest after a set until `until`; `length` is the full rest, for the ring.
     case resting(index: Int, until: Date, length: TimeInterval)
+    /// A timed set on hold; `elapsed` is what had run when it was stopped.
+    case paused(index: Int, elapsed: TimeInterval)
     /// All sets of an exercise done.
     case exerciseDone(index: Int)
     /// Rating the exercises at the end.
@@ -17,7 +19,7 @@ enum SessionPhase: Equatable, Codable {
     /// The exercise the phase is about, if any.
     var exerciseIndex: Int? {
         switch self {
-        case let .working(index, _), let .resting(index, _, _), let .exerciseDone(index): index
+        case let .working(index, _), let .resting(index, _, _), let .paused(index, _), let .exerciseDone(index): index
         case .overview, .rating: nil
         }
     }
@@ -179,6 +181,26 @@ final class WorkoutSession: Identifiable {
         guard case let .resting(index, _, _) = phase else { return }
         phase = .working(index: index, since: .now)
         changed()
+    }
+
+    /// Holds a timed set where it is: the clock stops until `resume`.
+    func pause(at now: Date = .now) {
+        guard case let .working(index, since) = phase, plan.exercises[index].exercise.isTimed else { return }
+        phase = .paused(index: index, elapsed: max(0, now.timeIntervalSince(since)))
+        changed()
+    }
+
+    /// Goes on from the held time, as if the set had not stopped.
+    func resume(at now: Date = .now) {
+        guard case let .paused(index, elapsed) = phase else { return }
+        phase = .working(index: index, since: now.addingTimeInterval(-elapsed))
+        changed()
+    }
+
+    /// Leaves an exercise without writing anything down and goes to the next one with sets left; with none
+    /// left, back to the list. Sets already done stay.
+    func skip(_ index: Int) {
+        if let next = nextExercise(after: index), next != index { start(next) } else { showOverview() }
     }
 
     /// Changes a set already done, keeping its place and identity.

@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 import SwiftData
 
@@ -11,6 +12,9 @@ struct MaestroFelixApp: App {
                 .preferredColorScheme(.dark)
                 .tint(FelixTheme.accent)
                 .environment(\.locale, Locale(identifier: "ru_RU"))
+                // The glass of FelixGlass takes its colours from the app's theme.
+                .environment(\.glassPalette, GlassPalette(accent: FelixTheme.cobalt, accentDeep: FelixTheme.cobaltDeep,
+                                                         label: FelixTheme.text, secondaryLabel: FelixTheme.secondary))
         }
     }
 }

@@ -65,4 +65,25 @@ struct RecordsTests {
         #expect(PersonalRecords.volumeComparison(in: now, before: [past]) == VolumeComparison(current: 1500, previous: 1000))
         #expect(PersonalRecords.volumeComparison(in: now, before: []) == nil)
     }
+
+    // MARK: Shown as a number and an arrow
+
+    @Test("a record is shown as its new value and how far it moved") @MainActor
+    func recordsAreShownAsValueAndDelta() {
+        let weight = RecordHit(exerciseID: "bench-press", kind: .weight, value: 62.5, previous: 60)
+        #expect(WorkoutResultsBlock.valueText(weight) == "62,5 кг" && WorkoutResultsBlock.deltaText(weight) == "+2,5")
+        let max = RecordHit(exerciseID: "bench-press", kind: .oneRepMax, value: 80, previous: 77.5)
+        #expect(WorkoutResultsBlock.valueText(max) == "≈ 80 кг" && WorkoutResultsBlock.deltaText(max) == "+2,5")
+        let reps = RecordHit(exerciseID: "push-ups", kind: .reps, value: 18, previous: 15)
+        #expect(WorkoutResultsBlock.valueText(reps) == "18 повт." && WorkoutResultsBlock.deltaText(reps) == "+3")
+        let volume = RecordHit(exerciseID: "bench-press", kind: .volume, value: 4500, previous: 4200)
+        #expect(WorkoutResultsBlock.valueText(volume) == "\(WorkoutSummaryView.tons(4500)) кг")
+        #expect(WorkoutResultsBlock.deltaText(volume) == "+\(WorkoutSummaryView.tons(300))")
+    }
+
+    @Test("the full sentence stays for VoiceOver") @MainActor
+    func theSpokenSentenceIsKept() {
+        let hit = RecordHit(exerciseID: "bench-press", kind: .weight, value: 65, previous: 60)
+        #expect(WorkoutResultsBlock.recordText(hit) == "Рабочий вес 65 кг, раньше 60")
+    }
 }

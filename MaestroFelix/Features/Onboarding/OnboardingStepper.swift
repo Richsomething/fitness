@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// The steps as a glass tab bar at the bottom, like the iOS tab bar: an icon per step and a lighter
@@ -15,13 +16,15 @@ struct OnboardingStepper: View {
     private static let steps = OnboardingStep.allCases.filter { $0 != .introduction }
 
     var body: some View {
-        HStack(spacing: 2) {
-            ForEach(Self.steps) { step in
-                item(step)
+        GlassGroup {
+            HStack(spacing: 2) {
+                ForEach(Self.steps) { step in
+                    item(step)
+                }
             }
+            .padding(5)
+            .felixGlass(in: Capsule(), interactive: false)
         }
-        .padding(5)
-        .felixGlass(in: Capsule(), interactive: false)
         .animation(reduceMotion ? .easeInOut(duration: 0.2) : .spring(response: 0.46, dampingFraction: 0.7), value: current)
     }
 

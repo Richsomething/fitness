@@ -134,7 +134,7 @@ enum ReminderPlanner {
                 return ReminderRequest(slot: first.slot, kind: .comeback, fireDate: fire, title: texts.coachName ?? ReminderTexts.neutralTitle, body: body)
             }
             return ReminderRequest(slot: first.slot, kind: .comeback, fireDate: fire, title: ReminderTexts.neutralTitle,
-                                   body: "Если не получилось — ничего страшного. Ждём тебя на следующем занятии.")
+                                   body: "Не получилось — ничего страшного. Ждём на следующем занятии.")
         }
     }
 }

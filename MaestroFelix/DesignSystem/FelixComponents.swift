@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// Scrolls the screen's column to the view marked with `.id(_:)`, so a block that appears low on the screen
@@ -80,16 +81,40 @@ struct StarterPlanNote: View {
 
 /// What marks the chosen item of a glass control: a cobalt lens with a light edge. The segmented choice,
 /// the tab bar and the step bar all use it, so a selection reads the same everywhere.
-struct GlassLens: View {
+/// An empty place, said with a glyph and a few words: the glyph is a picture of what will be here, so the
+/// words only have to say when.
+struct EmptyHint: View {
+    let symbol: String
+    let text: String
+
     var body: some View {
-        Capsule()
-            .fill(LinearGradient(colors: [FelixTheme.cobalt.opacity(0.85), FelixTheme.cobaltDeep.opacity(0.85)],
-                                 startPoint: .top, endPoint: .bottom))
-            .overlay(Capsule().strokeBorder(Color.white.opacity(0.25), lineWidth: 1))
+        HStack(spacing: 12) {
+            Image(systemName: symbol)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(FelixTheme.ice)
+                .frame(width: 40, height: 40)
+                .background(Circle().fill(FelixTheme.cobalt.opacity(0.18)))
+                .accessibilityHidden(true)
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(FelixTheme.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
     }
 }
 
-/// A short choice between a few named options, as a glass capsule with a lens under the chosen one.
+/// The lens under a chosen item: accent glass from the FelixGlass library. The name stays so the step bar of the
+/// sign-up, which draws its own items, can keep using it.
+struct GlassLens: View {
+    var body: some View {
+        GlassSelectionLens()
+    }
+}
+
+/// A short choice between a few named options, as a glass capsule with a lens under the chosen one. A thin face
+/// over `GlassSegmentedControl`, so the call sites keep their `compact` and `tight` switches.
 struct GlassSegmented<Value: Hashable>: View {
     let options: [(value: Value, title: String)]
     @Binding var selection: Value
@@ -97,38 +122,9 @@ struct GlassSegmented<Value: Hashable>: View {
     var compact = false
     /// Smaller still, for four longer names side by side, so they all keep one size instead of shrinking unevenly.
     var tight = false
-    @Namespace private var lens
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        HStack(spacing: 2) {
-            ForEach(options.indices, id: \.self) { index in
-                segment(options[index])
-            }
-        }
-        .padding(4)
-        .felixGlass(in: Capsule(), interactive: false)
-        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.78), value: selection)
-    }
-
-    private func segment(_ option: (value: Value, title: String)) -> some View {
-        let isSelected = option.value == selection
-        return Button { selection = option.value } label: {
-            Text(option.title)
-                .font((tight ? Font.caption : compact ? Font.footnote : Font.subheadline).weight(.semibold))
-                .foregroundStyle(isSelected ? Color.white : FelixTheme.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(compact ? 0.7 : 0.8)
-                // Room between the words and the edge of the lens, so a long name shrinks instead of touching it.
-                .padding(.horizontal, tight ? 5 : compact ? 8 : 12)
-                .frame(maxWidth: .infinity, minHeight: compact ? 40 : 44)
-                .background {
-                    if isSelected { GlassLens().matchedGeometryEffect(id: "lens", in: lens) }
-                }
-                .contentShape(Capsule())
-        }
-        .buttonStyle(PressableStyle())
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        GlassSegmentedControl(options: options, selection: $selection, density: tight ? .tight : compact ? .compact : .regular)
     }
 }
 

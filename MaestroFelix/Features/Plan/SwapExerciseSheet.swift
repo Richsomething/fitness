@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// What to do in place of an exercise of a planned session: the ones that work the same muscles, without load
@@ -17,7 +18,7 @@ struct SwapExerciseSheet: View {
                 Text("Что вместо «\(ExerciseCatalog.exercise(exerciseID).title)»?")
                     .font(.felixHeadline)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Работают те же мышцы. Подходы и повторения остаются, вес подберётся заново.")
+                Text("Те же мышцы, подходы и повторы. Вес подберётся заново.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -30,7 +31,7 @@ struct SwapExerciseSheet: View {
                 }
                 .scrollIndicators(.hidden)
             } else {
-                Text("Подходящих замен нет: остальные упражнения этой группы уже в занятии или нагружают отмеченные зоны.")
+                Text("Замен нет: остальные уже в занятии или нагружают отмеченные зоны.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -39,10 +40,7 @@ struct SwapExerciseSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium, .large])
     }
 
     private func row(_ option: Exercise, in session: PlannedSession) -> some View {

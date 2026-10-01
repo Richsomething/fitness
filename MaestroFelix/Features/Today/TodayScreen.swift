@@ -12,15 +12,18 @@ struct TodayScreen: View {
             ScreenScaffold {
                 VStack(alignment: .leading, spacing: 14) {
                     header.entrance(0)
-                    NavigationLink {
-                        TrainingStartView()
-                    } label: {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(app.adaptiveTraining.state.route == nil ? "С чего начнём?" : "Подбор нагрузки").font(.headline)
-                            Text(app.adaptiveTraining.state.route?.title ?? "Записать результаты, подготовиться или оценить силу позже")
-                                .font(.subheadline).foregroundStyle(FelixTheme.secondary)
-                        }.padding(16).frame(maxWidth: .infinity, alignment: .leading).background(CardSurface(radius: 22))
-                    }.buttonStyle(PressableStyle())
+                    // Only until a way is chosen; after that "Подбор нагрузки" lives in the profile.
+                    if app.adaptiveTraining.state.route == nil {
+                        NavigationLink {
+                            TrainingStartView()
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("С чего начнём?").font(.headline)
+                                Text("Записать результаты, подготовиться или оценить силу позже")
+                                    .font(.subheadline).foregroundStyle(FelixTheme.secondary)
+                            }.padding(16).frame(maxWidth: .infinity, alignment: .leading).background(CardSurface(radius: 22))
+                        }.buttonStyle(PressableStyle())
+                    }
                     if let saved = app.workouts.resumable, app.activeSession == nil {
                         ResumeBanner(snapshot: saved, onResume: { app.resume() }, onDiscard: { confirmsDiscard = true })
                             .entrance(1)

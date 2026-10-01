@@ -32,7 +32,7 @@ struct WorkoutRatingView: View {
                         Text("Всё в самый раз?")
                             .font(.felixTitle)
                             .fixedSize(horizontal: false, vertical: true)
-                        Text("Отметь, как прошло каждое упражнение: по этому уточним следующую нагрузку.")
+                        Text("Отметь каждое упражнение: уточним нагрузку.")
                             .font(.subheadline)
                             .foregroundStyle(FelixTheme.secondary)
                             .fixedSize(horizontal: false, vertical: true)

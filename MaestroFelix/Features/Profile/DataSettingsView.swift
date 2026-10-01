@@ -12,7 +12,7 @@ struct DataSettingsView: View {
         ScreenScaffold(glow: UnitPoint(x: 0.1, y: 0)) {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Данные").font(.felixTitle)
-                Text("Всё хранится только на этом iPhone: профиль, тренировки, вес и расписание. Пока нет переноса на другое устройство, файл-копия — единственный способ сохранить историю.")
+                Text("Данные только на этом iPhone. Копию можно сохранить файлом.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -29,14 +29,14 @@ struct DataSettingsView: View {
             Button("Удалить всё", role: .destructive) { Task { await app.eraseEverything() } }
             Button("Оставить", role: .cancel) {}
         } message: {
-            Text("Профиль, тренировки, вес, расписание и напоминания исчезнут с этого iPhone. Вернуть их будет нельзя.")
+            Text("Всё исчезнет с этого iPhone. Вернуть нельзя.")
         }
     }
 
     private var exportCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Копия данных", systemImage: "square.and.arrow.up").font(.headline)
-            Text("Один файл в формате JSON: профиль, тренировки по подходам, вес, расписание и настройки.")
+            Text("Один файл JSON со всеми данными.")
                 .font(.subheadline)
                 .foregroundStyle(FelixTheme.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -61,7 +61,7 @@ struct DataSettingsView: View {
     private var eraseCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Удалить всё", systemImage: "trash").font(.headline)
-            Text("Стирает данные приложения и ожидающие уведомления. Приложение начнёт с чистого листа.")
+            Text("Стирает данные и уведомления. Приложение начнёт заново.")
                 .font(.subheadline)
                 .foregroundStyle(FelixTheme.secondary)
                 .fixedSize(horizontal: false, vertical: true)

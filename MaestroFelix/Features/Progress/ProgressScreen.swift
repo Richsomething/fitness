@@ -125,10 +125,7 @@ private struct HistoryPreview: View {
                 }
             }
             if recent.isEmpty {
-                Text("Здесь появятся завершённые тренировки: что сделано, с какими весами и как ощущалось.")
-                    .font(.subheadline)
-                    .foregroundStyle(FelixTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                EmptyHint(symbol: "clock.arrow.circlepath", text: "Здесь появятся завершённые тренировки.")
             } else {
                 VStack(spacing: 0) {
                     ForEach(Array(recent.enumerated()), id: \.element.id) { offset, log in

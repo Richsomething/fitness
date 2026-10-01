@@ -1,23 +1,24 @@
 import SwiftUI
 
 /// Choosing the coach. A coach is a virtual helper — never a person — and changing it changes only the
-/// words: the plan, the load and the history stay as they are.
+/// words: the plan, the load and the history stay as they are. Three emblems in a row to pick from, and one card
+/// under them with how the chosen one sounds.
 struct CoachPickerView: View {
     @Environment(AppCoordinator.self) private var app
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScreenScaffold(glow: UnitPoint(x: 0.1, y: 0)) {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 18) {
                 Text("Тренер").font(.felixTitle)
-                Text("Тренер — виртуальный помощник, а не живой человек. Он меняет только слова; план и история остаются прежними.")
+                Text("Виртуальный помощник, не живой человек. Меняет только слова.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Label("Его реплики — на экране «Сегодня», после тренировки и в напоминаниях.", systemImage: "text.bubble")
-                    .font(.footnote.weight(.medium))
-                    .foregroundStyle(FelixTheme.ice)
-                    .fixedSize(horizontal: false, vertical: true)
-                ForEach(CoachCatalog.personas) { persona in card(persona) }
+                HStack(spacing: 8) {
+                    ForEach(CoachCatalog.personas) { avatarButton($0) }
+                }
+                chosenCard(app.coach.persona)
                 if let error = app.coach.storageError { FelixInlineIssue(text: error) }
             }
             .entranceScope("coach-picker")
@@ -25,45 +26,47 @@ struct CoachPickerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .sensoryFeedback(.selection, trigger: app.coach.state.personaID)
+        .animation(reduceMotion ? nil : .smooth(duration: 0.25), value: app.coach.state.personaID)
     }
 
-    private func card(_ persona: CoachPersona) -> some View {
+    /// An emblem and a name; the one chosen has a ring around it and a brighter name.
+    private func avatarButton(_ persona: CoachPersona) -> some View {
         let isChosen = persona.id == app.coach.persona.id
-        // The one chosen shows how it sounds before, after and between workouts; the others, just one line to compare.
-        let moments: [(title: String, event: CoachEvent)] = isChosen
-            ? [("Перед тренировкой", .upcomingWorkout), ("После тренировки", .sessionCompleted), ("В день отдыха", .restDay)]
-            : [("Перед тренировкой", .upcomingWorkout)]
         return Button { app.coach.select(persona.id) } label: {
-            HStack(alignment: .top, spacing: 14) {
-                CoachAvatar(persona: persona, size: 56)
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack {
-                        Text(persona.name).font(.headline)
-                        Spacer(minLength: 8)
-                        if isChosen { Image(systemName: "checkmark.circle.fill").foregroundStyle(FelixTheme.ice) }
-                    }
-                    Eyebrow("\(persona.tone.title) тон", color: FelixTheme.ice)
-                    Text(persona.blurb).font(.subheadline).foregroundStyle(FelixTheme.secondary)
-                    ForEach(moments, id: \.title) { moment in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(moment.title).font(.caption.weight(.semibold)).foregroundStyle(FelixTheme.tertiary)
-                            Text("«\(CoachCatalog.line(for: moment.event, persona: persona, context: CoachContext(), seed: 0))»")
-                                .font(.subheadline.italic())
-                                .foregroundStyle(FelixTheme.text.opacity(0.9))
-                        }
-                        .padding(.top, 4)
-                    }
-                }
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(spacing: 10) {
+                CoachAvatar(persona: persona, size: 72)
+                    .padding(6)
+                    .overlay(Circle().strokeBorder(isChosen ? FelixTheme.ice : Color.clear, lineWidth: 3))
+                Text(persona.name)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(isChosen ? FelixTheme.text : FelixTheme.secondary)
             }
-            .foregroundStyle(FelixTheme.text)
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(CardSurface(radius: 24, highlighted: isChosen))
-            .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .frame(maxWidth: .infinity, minHeight: 120)
+            .contentShape(Rectangle())
         }
         .buttonStyle(PressableStyle())
+        .accessibilityLabel(persona.name)
+        .accessibilityValue(persona.tone.title)
         .accessibilityAddTraits(isChosen ? .isSelected : [])
+    }
+
+    /// The name, the tone in one word and how the coach sounds before a workout.
+    private func chosenCard(_ persona: CoachPersona) -> some View {
+        let line = CoachCatalog.line(for: .upcomingWorkout, persona: persona, context: CoachContext(), seed: 0)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(persona.name).font(.headline)
+                Spacer(minLength: 8)
+                Eyebrow(persona.tone.title, color: FelixTheme.ice)
+            }
+            Text("«\(line)»")
+                .font(.subheadline.italic())
+                .foregroundStyle(FelixTheme.text.opacity(0.9))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(CardSurface(radius: 24, highlighted: true))
+        .accessibilityElement(children: .combine)
     }
 }

@@ -5,6 +5,7 @@ import SwiftUI
 struct PlanSessionCard: View {
     let session: PlannedSession
     @Environment(AppCoordinator.self) private var app
+    @State private var moving = false
 
     private var isToday: Bool { session.day == app.today }
 
@@ -12,6 +13,18 @@ struct PlanSessionCard: View {
         NavigationLink { SessionDetailView(slot: session.key) } label: { content }
             .buttonStyle(PressableStyle())
             .accessibilityHint("Открыть занятие")
+            // Start or move straight from the list, without opening the details first.
+            .contextMenu {
+                if session.status == .planned { quickActions }
+            }
+            .sheet(isPresented: $moving) { MoveSessionSheet(session: session) }
+    }
+
+    @ViewBuilder private var quickActions: some View {
+        Button { app.start(session.plan, slot: session.key) } label: {
+            Label(isToday ? "Начать тренировку" : "Начать раньше", systemImage: "play.fill")
+        }
+        Button { moving = true } label: { Label("Перенести", systemImage: "calendar.badge.clock") }
     }
 
     private var content: some View {

@@ -19,10 +19,7 @@ struct StrengthProgressCard: View {
                 chips(exercises, selected: selected)
                 detail(progress)
             } else {
-                Text("Здесь появятся графики по упражнениям, когда в журнале будут рабочие подходы: расчётный максимум, повторения, удержание.")
-                    .font(.subheadline)
-                    .foregroundStyle(FelixTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                EmptyHint(symbol: "chart.line.uptrend.xyaxis", text: "Графики появятся после первых рабочих подходов.")
             }
         }
         .padding(20)
@@ -61,10 +58,7 @@ struct StrengthProgressCard: View {
             if progress.points.count >= 2 {
                 chart(progress)
             } else {
-                Text("Нужны минимум две тренировки с этим упражнением — тогда появится график.")
-                    .font(.footnote)
-                    .foregroundStyle(FelixTheme.tertiary)
-                    .fixedSize(horizontal: false, vertical: true)
+                EmptyHint(symbol: "chart.xyaxis.line", text: "График появится после двух тренировок.")
             }
             if let best = progress.best {
                 Label("Лучшее: \(format(best.value, progress.metric)) \(progress.metric.unit) · \(best.date.formatted(.dateTime.day().month(.abbreviated)))",
@@ -141,10 +135,7 @@ struct WeeklyVolumeCard: View {
                         .foregroundStyle(FelixTheme.secondary)
                 }
             } else {
-                Text("Объём — вес на повторения по рабочим подходам. Появится после первой тренировки с весом.")
-                    .font(.subheadline)
-                    .foregroundStyle(FelixTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                EmptyHint(symbol: "chart.bar.fill", text: "Объём: вес × повторы. Появится после первой тренировки с весом.")
             }
         }
         .padding(20)

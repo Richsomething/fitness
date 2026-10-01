@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// The set under way: what it was last time, the weight and repetitions to record (already filled in,
@@ -128,10 +129,7 @@ struct SetEditSheet: View {
         .padding(24)
         .frame(maxHeight: .infinity, alignment: .top)
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.medium])
         .onAppear {
             weight = initial.weightKg ?? 0
             reps = Double(initial.reps ?? 1)

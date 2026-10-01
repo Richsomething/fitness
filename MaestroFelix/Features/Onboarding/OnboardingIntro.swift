@@ -25,7 +25,7 @@ struct OnboardingIntro: View {
         if isEditing { return "Измени, что нужно: остальное останется как есть." }
         let steps = OnboardingStep.allCases.count - 1
         let word = RussianPlural.form(steps, one: "шаг", few: "шага", many: "шагов")
-        return "\(steps) коротких \(word) — и у тебя план на неделю. Около трёх минут; всё можно поменять позже."
+        return "\(steps) коротких \(word), около трёх минут, и у тебя план на неделю."
     }
 
     var body: some View {

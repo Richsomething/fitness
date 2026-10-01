@@ -1,3 +1,4 @@
+import FelixGlass
 import SwiftUI
 
 /// How to do an exercise: which muscles it works, on the front and back of the same drawing the
@@ -28,10 +29,7 @@ struct ExerciseTechniqueSheet: View {
             .padding(.bottom, 24)
         }
         .foregroundStyle(FelixTheme.text)
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
-        .presentationCornerRadius(34)
-        .presentationBackground(Color(red: 0.035, green: 0.04, blue: 0.07))
+        .glassSheet(detents: [.large])
     }
 
     private var header: some View {
