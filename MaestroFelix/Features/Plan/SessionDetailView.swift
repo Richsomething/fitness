@@ -68,7 +68,7 @@ struct SessionDetailView: View {
             Button("Пропустить", role: .destructive) { app.skip(session.key) }
             Button("Не пропускать", role: .cancel) {}
         } message: {
-            Text("Она не пойдёт в серию, но её можно вернуть в план.")
+            Text("Не пойдёт в серию. Можно вернуть.")
         }
     }
 
@@ -193,8 +193,8 @@ struct SessionDetailView: View {
     /// What a session cannot be used for, said where the actions would be.
     @ViewBuilder private func notes(_ session: PlannedSession) -> some View {
         switch session.status {
-        case .missed: note("Это занятие уже прошло. Перенести его нельзя, но план продолжается.")
-        case .paused: note("Занятие на паузе: пока она идёт, оно не считается пропуском.")
+        case .missed: note("Занятие прошло, перенести нельзя.")
+        case .paused: note("На паузе: пропусков нет.")
         default: EmptyView()
         }
     }

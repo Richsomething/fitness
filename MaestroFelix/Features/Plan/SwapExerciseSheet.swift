@@ -17,7 +17,7 @@ struct SwapExerciseSheet: View {
                 Text("Что вместо «\(ExerciseCatalog.exercise(exerciseID).title)»?")
                     .font(.felixHeadline)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Работают те же мышцы. Подходы и повторения остаются, вес подберётся заново.")
+                Text("Те же мышцы, подходы и повторы. Вес подберётся заново.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -30,7 +30,7 @@ struct SwapExerciseSheet: View {
                 }
                 .scrollIndicators(.hidden)
             } else {
-                Text("Подходящих замен нет: остальные упражнения этой группы уже в занятии или нагружают отмеченные зоны.")
+                Text("Замен нет: остальные уже в занятии или нагружают отмеченные зоны.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)

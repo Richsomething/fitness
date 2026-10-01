@@ -33,12 +33,12 @@ struct WeightCard: View {
                 if entries.count >= 2 {
                     chart(entries)
                 } else {
-                    Text("Запиши вес ещё раз — появится график и тренд.")
+                    Text("Запиши ещё раз — появится график.")
                         .font(.subheadline)
                         .foregroundStyle(FelixTheme.secondary)
                 }
             } else {
-                Text("Пока нет записей. Вес из профиля появится здесь после сохранения профиля.")
+                Text("Записей веса пока нет.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)

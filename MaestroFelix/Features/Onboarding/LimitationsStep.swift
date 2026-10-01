@@ -24,7 +24,7 @@ struct LimitationsStep: View {
             scanner
                 .entrance(3)
             // Why it is asked and where it stays: health information needs a reason and a place.
-            Text("Дискомфорт — твоя оценка, не диагноз. Отметки нужны только чтобы обойти нагрузку на больные места и хранятся лишь на этом iPhone.")
+            Text("Это твоя оценка, не диагноз. Отметки остаются на iPhone.")
                 .font(.footnote)
                 .foregroundStyle(FelixTheme.tertiary)
                 .fixedSize(horizontal: false, vertical: true)

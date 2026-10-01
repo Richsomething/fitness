@@ -56,7 +56,7 @@ struct PlanReadyView: View {
                     .shadow(color: FelixTheme.cobalt.opacity(0.7), radius: 24)
                 VStack(alignment: .leading, spacing: 8) {
                     Text("План готов").font(.felixTitle)
-                    Text("Составлен по общим правилам из твоих ответов. Дни, время и состав можно менять в плане.")
+                    Text("Составлен по общим правилам. Всё можно менять в плане.")
                         .font(.subheadline)
                         .foregroundStyle(FelixTheme.secondary)
                         .fixedSize(horizontal: false, vertical: true)

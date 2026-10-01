@@ -234,7 +234,7 @@ struct ExerciseRunnerView: View {
         if on && !changed {
             alertNote = "Уведомления выключены в настройках iOS."
         } else {
-            alertNote = changed ? (on ? "Сигнал включён: скажем, когда отдых закончится, даже если экран погас." : "Сигнал выключен.") : nil
+            alertNote = changed ? (on ? "Сигнал включён." : "Сигнал выключен.") : nil
         }
         if changed { app.syncRestAlert(for: session) }
     }

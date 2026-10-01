@@ -19,7 +19,7 @@ struct StrengthProgressCard: View {
                 chips(exercises, selected: selected)
                 detail(progress)
             } else {
-                Text("Здесь появятся графики по упражнениям, когда в журнале будут рабочие подходы: расчётный максимум, повторения, удержание.")
+                Text("Графики появятся после первых рабочих подходов.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -61,7 +61,7 @@ struct StrengthProgressCard: View {
             if progress.points.count >= 2 {
                 chart(progress)
             } else {
-                Text("Нужны минимум две тренировки с этим упражнением — тогда появится график.")
+                Text("График появится после двух тренировок.")
                     .font(.footnote)
                     .foregroundStyle(FelixTheme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -141,7 +141,7 @@ struct WeeklyVolumeCard: View {
                         .foregroundStyle(FelixTheme.secondary)
                 }
             } else {
-                Text("Объём — вес на повторения по рабочим подходам. Появится после первой тренировки с весом.")
+                Text("Объём: вес × повторы. Появится после первой тренировки с весом.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)

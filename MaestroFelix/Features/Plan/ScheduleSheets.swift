@@ -15,7 +15,7 @@ struct MoveSessionSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 Eyebrow("Перенос", color: FelixTheme.ice)
                 Text("Когда потренируемся?").font(.felixHeadline).fixedSize(horizontal: false, vertical: true)
-                Text("Состав и серия сохранятся. В один день — одно занятие.")
+                Text("Состав и серия сохранятся.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -85,7 +85,7 @@ struct PauseSheet: View {
             VStack(alignment: .leading, spacing: 8) {
                 Eyebrow("Пауза", color: FelixTheme.ice)
                 Text("На сколько отдохнём?").font(.felixHeadline).fixedSize(horizontal: false, vertical: true)
-                Text("Занятия на паузе не считаются пропусками, серия ждёт, напоминаний не будет. Историю это не меняет.")
+                Text("На паузе: пропусков и напоминаний нет.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)

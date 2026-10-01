@@ -125,7 +125,7 @@ private struct HistoryPreview: View {
                 }
             }
             if recent.isEmpty {
-                Text("Здесь появятся завершённые тренировки: что сделано, с какими весами и как ощущалось.")
+                Text("Здесь появятся завершённые тренировки.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)

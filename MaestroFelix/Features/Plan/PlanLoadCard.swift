@@ -52,7 +52,7 @@ struct PlanLoadCard: View {
     }
 
     private var coverage: String {
-        guard !overview.untouched.isEmpty else { return "Всё тело в деле: ни одна группа не осталась без нагрузки." }
+        guard !overview.untouched.isEmpty else { return "Все группы мышц в деле." }
         return "Без нагрузки на этой неделе: \(overview.untouched.map { $0.title.lowercased() }.joined(separator: ", "))."
     }
 }

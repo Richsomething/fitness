@@ -9,13 +9,9 @@ struct CoachPickerView: View {
         ScreenScaffold(glow: UnitPoint(x: 0.1, y: 0)) {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Тренер").font(.felixTitle)
-                Text("Тренер — виртуальный помощник, а не живой человек. Он меняет только слова; план и история остаются прежними.")
+                Text("Виртуальный помощник, не живой человек. Меняет только слова.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Label("Его реплики — на экране «Сегодня», после тренировки и в напоминаниях.", systemImage: "text.bubble")
-                    .font(.footnote.weight(.medium))
-                    .foregroundStyle(FelixTheme.ice)
                     .fixedSize(horizontal: false, vertical: true)
                 ForEach(CoachCatalog.personas) { persona in card(persona) }
                 if let error = app.coach.storageError { FelixInlineIssue(text: error) }
@@ -29,10 +25,8 @@ struct CoachPickerView: View {
 
     private func card(_ persona: CoachPersona) -> some View {
         let isChosen = persona.id == app.coach.persona.id
-        // The one chosen shows how it sounds before, after and between workouts; the others, just one line to compare.
-        let moments: [(title: String, event: CoachEvent)] = isChosen
-            ? [("Перед тренировкой", .upcomingWorkout), ("После тренировки", .sessionCompleted), ("В день отдыха", .restDay)]
-            : [("Перед тренировкой", .upcomingWorkout)]
+        // Every coach shows the same one line, so the three can be compared at a glance.
+        let moments: [(title: String, event: CoachEvent)] = [("Перед тренировкой", .upcomingWorkout)]
         return Button { app.coach.select(persona.id) } label: {
             HStack(alignment: .top, spacing: 14) {
                 CoachAvatar(persona: persona, size: 56)
@@ -42,8 +36,7 @@ struct CoachPickerView: View {
                         Spacer(minLength: 8)
                         if isChosen { Image(systemName: "checkmark.circle.fill").foregroundStyle(FelixTheme.ice) }
                     }
-                    Eyebrow("\(persona.tone.title) тон", color: FelixTheme.ice)
-                    Text(persona.blurb).font(.subheadline).foregroundStyle(FelixTheme.secondary)
+                    Eyebrow(persona.tone.title, color: FelixTheme.ice)
                     ForEach(moments, id: \.title) { moment in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(moment.title).font(.caption.weight(.semibold)).foregroundStyle(FelixTheme.tertiary)

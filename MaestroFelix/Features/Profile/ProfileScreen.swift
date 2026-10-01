@@ -17,7 +17,7 @@ struct ProfileScreen: View {
                         SectionHeader(title: "Твоя анкета").padding(.top, 8).entrance(2)
                         ProfileMetricsCard(draft: draft) { edit(.body) }.entrance(2)
                         ProfileDetailsList(draft: draft, edit: edit).entrance(3)
-                        Text("Нажми на строку, чтобы изменить её. Новые дни расписания действуют сразу, а уже прожитые остаются как были.")
+                        Text("Нажми на строку, чтобы изменить. Прожитые дни не меняются.")
                             .font(.footnote)
                             .foregroundStyle(FelixTheme.tertiary)
                             .padding(.horizontal, 4)
@@ -64,7 +64,7 @@ struct ProfileScreen: View {
 
     private var footer: some View {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-        return Text("Maestro Felix \(version) · данные хранятся только на этом iPhone")
+        return Text("Maestro Felix \(version)")
             .font(.footnote)
             .foregroundStyle(FelixTheme.tertiary)
             .frame(maxWidth: .infinity)

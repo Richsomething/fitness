@@ -36,7 +36,11 @@ struct ExerciseLine: View {
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
                 if let last = app.lastTimeText(for: item.exerciseID) {
-                    Text("Прошлый раз: \(last)").font(.caption).foregroundStyle(FelixTheme.tertiary)
+                    // The clock says "last time"; the words are for VoiceOver.
+                    Label(last, systemImage: "clock.arrow.circlepath")
+                        .font(.caption)
+                        .foregroundStyle(FelixTheme.tertiary)
+                        .accessibilityLabel("Прошлый раз: \(last)")
                 }
             }
             Spacer(minLength: 8)
@@ -117,7 +121,7 @@ private struct TrainingCard: View {
             Button("Пропустить", role: .destructive) { app.skip(session.key) }
             Button("Не пропускать", role: .cancel) {}
         } message: {
-            Text("Она не пойдёт в серию, но её можно вернуть в план.")
+            Text("Не пойдёт в серию. Можно вернуть.")
         }
     }
 
@@ -186,7 +190,7 @@ private struct SkippedCard: View {
         VStack(alignment: .leading, spacing: 14) {
             Eyebrow("Сегодня · пропущена", color: FelixTheme.ice)
             Text(session.plan.title).font(.felixHeadline).fixedSize(horizontal: false, vertical: true)
-            Text("Ты решил пропустить это занятие. Оно не идёт в серию; передумаешь — верни его в план.")
+            Text("Занятие пропущено. Его можно вернуть в план.")
                 .font(.subheadline)
                 .foregroundStyle(FelixTheme.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -207,7 +211,7 @@ private struct PausedCard: View {
         VStack(alignment: .leading, spacing: 14) {
             Eyebrow("Пауза", color: FelixTheme.ice)
             Text("До \(TrainingCalendar.dateText(until))").font(.felixHeadline)
-            Text("Занятия на паузе не считаются пропусками, серия ждёт, напоминаний не будет.")
+            Text("На паузе: пропусков и напоминаний нет.")
                 .font(.subheadline)
                 .foregroundStyle(FelixTheme.secondary)
                 .fixedSize(horizontal: false, vertical: true)

@@ -14,7 +14,7 @@ struct RemindersSettingsView: View {
         ScreenScaffold(glow: UnitPoint(x: 0.9, y: 0)) {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Напоминания").font(.felixTitle)
-                Text("Уведомления приходят только о занятиях по плану. Вес, цель и ограничения в них не попадают.")
+                Text("Только о занятиях по плану. Без веса и ограничений.")
                     .font(.subheadline)
                     .foregroundStyle(FelixTheme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -37,8 +37,8 @@ struct RemindersSettingsView: View {
                     }
                 }
                 Text(settings.isEnabled
-                     ? "Напоминание, которое попало бы в тихие часы, не приходит. После пропуска — не больше одного напоминания в неделю."
-                     : "Придёт перед занятием по плану. Разрешение на уведомления iOS спросит при включении.")
+                     ? "В тихие часы не беспокоим. После пропуска не чаще раза в неделю."
+                     : "Придёт перед занятием. iOS спросит разрешение.")
                     .font(.footnote)
                     .foregroundStyle(FelixTheme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -46,7 +46,7 @@ struct RemindersSettingsView: View {
                 FelixList {
                     toggleRow("Сигнал об окончании отдыха", isOn: restAlertBinding)
                 }
-                Text("Если экран погас или приложение свёрнуто, между подходами придёт уведомление.")
+                Text("Придёт уведомление, даже если экран погас.")
                     .font(.footnote)
                     .foregroundStyle(FelixTheme.tertiary)
                     .fixedSize(horizontal: false, vertical: true)

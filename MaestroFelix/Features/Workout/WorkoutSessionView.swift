@@ -40,7 +40,7 @@ struct WorkoutSessionView: View {
             Button("Удалить без сохранения", role: .destructive) { discard() }
             Button("Вернуться к тренировке", role: .cancel) {}
         } message: {
-            Text("Всё, что записано в этой тренировке (\(session.completedSets) из \(session.totalSets)), пропадёт.")
+            Text("Записанное (\(session.completedSets) из \(session.totalSets)) пропадёт.")
         }
     }
 
