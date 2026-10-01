@@ -117,17 +117,20 @@ struct WorkoutSummaryView: View {
         }
     }
 
+    /// The streak and the next workout as two small marks: a flame with a number, a calendar with a day.
     private var footnotes: some View {
-        VStack(spacing: 6) {
+        HStack(spacing: 8) {
             if summary.streak >= 2 {
-                Text("Серия: \(summary.streak) \(RussianPlural.form(summary.streak, one: "тренировка", few: "тренировки", many: "тренировок")) по плану подряд")
+                InfoPill(text: "\(summary.streak)", symbol: "flame.fill")
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Серия: \(summary.streak) \(RussianPlural.form(summary.streak, one: "тренировка", few: "тренировки", many: "тренировок")) по плану подряд")
             }
             if let next = summary.nextSessionText {
-                Text("Следующая тренировка — \(next)")
+                InfoPill(text: next, symbol: "calendar")
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Следующая тренировка — \(next)")
             }
         }
-        .font(.footnote.weight(.medium))
-        .foregroundStyle(FelixTheme.secondary)
     }
 
     /// "4 200" — thousands separated by a thin space.

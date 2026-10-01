@@ -80,6 +80,30 @@ struct StarterPlanNote: View {
 
 /// What marks the chosen item of a glass control: a cobalt lens with a light edge. The segmented choice,
 /// the tab bar and the step bar all use it, so a selection reads the same everywhere.
+/// An empty place, said with a glyph and a few words: the glyph is a picture of what will be here, so the
+/// words only have to say when.
+struct EmptyHint: View {
+    let symbol: String
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: symbol)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(FelixTheme.ice)
+                .frame(width: 40, height: 40)
+                .background(Circle().fill(FelixTheme.cobalt.opacity(0.18)))
+                .accessibilityHidden(true)
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(FelixTheme.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
 struct GlassLens: View {
     var body: some View {
         Capsule()

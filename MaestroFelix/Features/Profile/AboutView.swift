@@ -49,14 +49,16 @@ struct AboutView: View {
     }
 }
 
-/// What the app keeps, where, and what leaves the phone, in plain words. It states what the code does today
-/// (see docs/architecture/privacy.md); a store listing and a legal policy are a separate matter before release.
+/// What the app keeps and what leaves the phone: one glyph and one short line per fact. It states what the code
+/// does today (see docs/architecture/privacy.md); a store listing and a legal policy are a separate matter
+/// before release.
 struct PrivacyView: View {
-    private static let facts: [(title: String, text: String)] = [
-        ("Хранение", "Всё только на этом iPhone, включая отметки о здоровье."),
-        ("Сеть", "Ничего не отправляется. Сторонней аналитики нет."),
-        ("Уведомления", "Только по твоему включению, без веса и ограничений."),
-        ("Экспорт и удаление", "В разделе «Данные». Резервные копии iPhone не затрагиваются."),
+    private static let facts: [(symbol: String, text: String)] = [
+        ("iphone", "Всё хранится только на этом iPhone"),
+        ("wifi.slash", "Ничего не уходит по сети"),
+        ("bell", "Уведомления без веса и ограничений"),
+        ("square.and.arrow.up", "Экспорт и удаление: раздел «Данные»"),
+        ("externaldrive", "Копии iPhone удаление не затрагивает"),
     ]
 
     var body: some View {
@@ -66,19 +68,34 @@ struct PrivacyView: View {
                     Eyebrow("Maestro Felix", color: FelixTheme.ice)
                     Text("Конфиденциальность").font(.felixTitle).fixedSize(horizontal: false, vertical: true)
                 }
-                ForEach(Array(Self.facts.enumerated()), id: \.offset) { _, fact in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Eyebrow(fact.title)
-                        Text(fact.text)
-                            .font(.subheadline)
-                            .foregroundStyle(FelixTheme.text.opacity(0.88))
-                            .fixedSize(horizontal: false, vertical: true)
+                FelixList {
+                    ForEach(Array(Self.facts.enumerated()), id: \.offset) { offset, fact in
+                        if offset > 0 { FelixDivider() }
+                        row(fact.symbol, fact.text)
                     }
-                    .padding(.horizontal, 4)
                 }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
+    }
+
+    private func row(_ symbol: String, _ text: String) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: symbol)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(FelixTheme.ice)
+                .frame(width: 40, height: 40)
+                .background(Circle().fill(FelixTheme.cobalt.opacity(0.18)))
+                .accessibilityHidden(true)
+            Text(text)
+                .font(.subheadline.weight(.medium))
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 }

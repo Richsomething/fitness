@@ -33,15 +33,10 @@ struct WeightCard: View {
                 if entries.count >= 2 {
                     chart(entries)
                 } else {
-                    Text("Запиши ещё раз — появится график.")
-                        .font(.subheadline)
-                        .foregroundStyle(FelixTheme.secondary)
+                    EmptyHint(symbol: "chart.xyaxis.line", text: "Запиши ещё раз — появится график.")
                 }
             } else {
-                Text("Записей веса пока нет.")
-                    .font(.subheadline)
-                    .foregroundStyle(FelixTheme.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                EmptyHint(symbol: "scalemass", text: "Записей веса пока нет.")
             }
             if let error = app.weights.storageError { FelixInlineIssue(text: error) }
         }

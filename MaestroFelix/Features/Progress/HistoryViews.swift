@@ -54,7 +54,7 @@ struct HistoryListView: View {
             VStack(alignment: .leading, spacing: 18) {
                 Text("История").font(.felixTitle)
                 if weeks.isEmpty {
-                    Text("Пока нет завершённых тренировок.").foregroundStyle(FelixTheme.secondary)
+                    EmptyHint(symbol: "figure.strengthtraining.traditional", text: "Пока нет завершённых тренировок.")
                 } else {
                     GlassSegmented(options: [(Mode.list, "Список"), (Mode.calendar, "Календарь")], selection: $mode)
                     switch mode {
